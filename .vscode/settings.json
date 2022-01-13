@@ -31,5 +31,6 @@
   },
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "sort-imports.languages": ["[typescriptreact]", "javascript", "typescript"]
 }
