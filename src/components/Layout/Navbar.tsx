@@ -14,10 +14,10 @@ const Navbar = () => (
           Django中文社区
         </BootstrapNavbar.Brand>
         <Nav>
-          <Nav.Link className="mt-2 mt-md-0" href="/home">
+          <Nav.Link className="mt-2 mt-md-0" href="/login">
             登录
           </Nav.Link>
-          <Nav.Link href="/test">注册</Nav.Link>
+          <Nav.Link href="/register">注册</Nav.Link>
         </Nav>
       </BootstrapNavbar.Collapse>
     </Container>

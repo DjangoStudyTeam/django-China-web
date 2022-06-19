@@ -2,7 +2,8 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 import Home from './pages/Home';
 import Layout from './components/Layout';
-import Test from './pages/Test';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
 function App() {
   return (
@@ -12,8 +13,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="home" element={<Home />} />
-          <Route path="test" element={<Test />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
         </Route>
       </Routes>
     </Router>
