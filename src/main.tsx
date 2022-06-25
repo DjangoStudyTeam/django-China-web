@@ -1,19 +1,20 @@
 import './index.scss';
 
 import App from './App';
-import { ProvideAuth } from './hooks/useAuth';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { UserInfoProvider } from './components/UserInfoProvider';
+import { faBell } from '@fortawesome/free-regular-svg-icons';
+import { library } from '@fortawesome/fontawesome-svg-core';
+
+library.add(faBell);
 
 ReactDOM.render(
   <React.StrictMode>
-    <ProvideAuth>
+    <UserInfoProvider>
       <App />
-    </ProvideAuth>
+    </UserInfoProvider>
   </React.StrictMode>,
+
   document.getElementById('root'),
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
