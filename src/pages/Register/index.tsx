@@ -4,7 +4,7 @@ const Register = () => (
   <Container>
     <Row className="justify-content-center">
       <Col sm={12} md={6} lg={4}>
-        <h4 className="mt-sm-3 mt-md-5">创建 Django中文社区账户</h4>
+        <h3 className="mt-sm-3 mt-md-5">创建 Django中文社区账户</h3>
         <Form className="mt-sm-3 mt-md-5">
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>用户名</Form.Label>
