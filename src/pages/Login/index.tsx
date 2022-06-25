@@ -5,6 +5,7 @@ import { HTTPError, TimeoutError } from 'ky';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { Link } from 'react-router-dom';
+import type { UserInfo } from '../../components/UserInfoProvider';
 import { api } from '../../utils';
 import { useFormik } from 'formik';
 import { useState } from 'react';
@@ -20,7 +21,7 @@ const Login = () => {
   const { setUserInfo } = useUserInfo();
 
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, _] = useSearchParams();
 
   const { values, touched, handleSubmit, handleBlur, handleChange, errors, isSubmitting } =
     useFormik({
@@ -32,7 +33,7 @@ const Login = () => {
       onSubmit: async (values, { setSubmitting, setErrors }) => {
         setSubmitting(true);
         try {
-          const res = await api.anno.post('auth/login/', { json: values }).json();
+          const res = await api.anno.post('auth/login/', { json: values }).json<UserInfo>();
           setUserInfo(res);
           Promise.resolve().then(() =>
             navigate(searchParams.get('redirect') || '/', { replace: true }),
@@ -60,6 +61,7 @@ const Login = () => {
         <div>
           <h3 className="mt-sm-3 mt-md-5">登录 Django中文社区</h3>
           <Form className="mt-sm-3 mt-md-5" noValidate onSubmit={handleSubmit}>
+            {/* todo: fix type error */}
             {errors.non_field_errors?.length > 0 && (
               <ul>
                 {errors.non_field_errors.map((errMsg, index) => (
