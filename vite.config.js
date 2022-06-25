@@ -7,4 +7,13 @@ export default defineConfig({
   build: {
     sourcemap: true,
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://82.156.11.154/api/v1',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/v1/, ''),
+      },
+    },
+  },
 });
