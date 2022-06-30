@@ -110,7 +110,7 @@ const Login = () => {
             </div>
           </Form>
           <div className="mt-3">
-            <Link to="/" className="link-primary">
+            <Link to="/forgot-password" className="link-primary">
               忘记密码？
             </Link>
           </div>
