@@ -1,6 +1,8 @@
 import { Navbar as BootstrapNavbar, Container, Dropdown, Nav, NavDropdown } from 'react-bootstrap';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import api from '../../utils/api';
+import { storage } from '../../utils';
 import { useUserInfo } from '../../hooks';
 
 const AnnoNavbar = () => (
@@ -28,7 +30,22 @@ const AnnoNavbar = () => (
 );
 
 const AuthNavbar = () => {
-  const { userInfo } = useUserInfo();
+  const { userInfo, setUserInfo } = useUserInfo();
+
+  const logout = async (event) => {
+    event.preventDefault();
+
+    const ok = confirm('确定要退出登录吗？');
+    if (!ok) return;
+
+    try {
+      await api.auth.post('auth/logout/');
+    } catch (error) {
+    } finally {
+      storage.remove('login');
+      setUserInfo(null);
+    }
+  };
   return (
     <BootstrapNavbar bg="dark" variant="dark" expand="md">
       <Container>
@@ -56,7 +73,7 @@ const AuthNavbar = () => {
             <Dropdown.Item href="#/action-3">帖子收藏</Dropdown.Item>
             <Dropdown.Item href="#/action-3">个人设置</Dropdown.Item>
             <Dropdown.Divider />
-            <Dropdown.Item href="#/action-3">注销登录</Dropdown.Item>
+            <Dropdown.Item onClick={logout}>注销登录</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
 
@@ -84,7 +101,7 @@ const AuthNavbar = () => {
               <Dropdown.Item href="#/action-3">帖子收藏</Dropdown.Item>
               <Dropdown.Item href="#/action-3">个人设置</Dropdown.Item>
               <Dropdown.Divider />
-              <Dropdown.Item href="#/action-3">注销登录</Dropdown.Item>
+              <Dropdown.Item onClick={logout}>注销登录</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
         </BootstrapNavbar.Collapse>
