@@ -4,8 +4,8 @@
 
 const prefix = import.meta.env.VITE_STORAGE_PREFIX as string;
 
-export const get = <T>(key: string): T => {
-  const json = localStorage.getItem(prefix + key);
+export const get = <T>(key: string, storage: any = localStorage): T => {
+  const json = storage.getItem(prefix + key);
   try {
     return JSON.parse(json as string);
   } catch {
@@ -13,10 +13,10 @@ export const get = <T>(key: string): T => {
   }
 };
 
-export const set = (key: string, value: unknown): void => {
-  localStorage.setItem(prefix + key, JSON.stringify(value));
+export const set = (key: string, value: unknown, storage: any = localStorage): void => {
+  storage.setItem(prefix + key, JSON.stringify(value));
 };
 
-export const remove = (key: string): void => {
-  localStorage.removeItem(prefix + key);
+export const remove = (key: string, storage: any = localStorage): void => {
+  storage.removeItem(prefix + key);
 };

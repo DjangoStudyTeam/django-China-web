@@ -1,6 +1,18 @@
+import { useContext, useMemo } from 'react';
+
+import { ToastsContext } from './components/ToastsProvider';
 import { UserInfoContext } from './components/UserInfoProvider';
-import { useContext } from 'react';
 
 export const useUserInfo = () => {
   return useContext(UserInfoContext);
+};
+
+export const useToasts = () => {
+  const ctx = useContext(ToastsContext);
+  return useMemo(
+    () => ({
+      create: ctx?.current?.create,
+    }),
+    [ctx?.current],
+  );
 };
