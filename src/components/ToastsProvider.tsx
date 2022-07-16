@@ -71,6 +71,7 @@ export const ToastsContext = createContext<React.RefObject<ToastsHandle> | null>
 
 export const ToastsProvider = ({ children }: { children: JSX.Element }) => {
   const toastsRef = useRef<ToastsHandle>(null);
+  window.toasts = toastsRef;
 
   return (
     <ToastsContext.Provider value={toastsRef}>
