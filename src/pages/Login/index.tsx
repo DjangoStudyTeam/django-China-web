@@ -72,8 +72,8 @@ const Login = () => {
     <Container>
       <Row className="justify-content-md-center form-box" lg="3">
         <div>
-          <h3 className="mt-sm-3 mt-md-5">登录 Django中文社区</h3>
-          <Form className="mt-sm-3 mt-md-5" noValidate onSubmit={handleSubmit}>
+          <h3 className="mt-3 mt-md-5">登录 Django中文社区</h3>
+          <Form className="mt-3 mt-md-5" noValidate onSubmit={handleSubmit}>
             {formErrors.non_field_errors?.length && (
               <ul>
                 {formErrors.non_field_errors.map((errMsg, index) => (

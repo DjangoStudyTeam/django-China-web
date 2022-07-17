@@ -96,8 +96,8 @@ const ResetPassword = () => {
 
   const form = (
     <>
-      <h3 className="mt-sm-3 mt-md-5">重置密码</h3>
-      <Form className="mt-sm-3 mt-md-5" noValidate onSubmit={handleSubmit}>
+      <h3 className="mt-3 mt-md-5">重置密码</h3>
+      <Form className="mt-3 mt-md-5" noValidate onSubmit={handleSubmit}>
         {formErrors.non_field_errors?.length && (
           <ul>
             {formErrors.non_field_errors.map((errMsg, index) => (

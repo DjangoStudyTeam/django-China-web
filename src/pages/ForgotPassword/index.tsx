@@ -50,11 +50,11 @@ const ForgotPassword = () => {
     <Container>
       <Row className="justify-content-center">
         <Col sm={12} md={6} lg={4}>
-          <h3 className="mt-sm-3 mt-md-5">忘记密码</h3>
+          <h3 className="mt-3 mt-md-5">忘记密码</h3>
           <div className="text-muted">通过注册邮箱重置密码。</div>
 
           {showMsg ? (
-            <div className="mt-sm-3 mt-md-5 text-info small">
+            <div className="mt-3 mt-md-5 text-info small">
               如果邮箱与注册用户匹配，一封重置密码的邮件将发送至该邮箱，请点击邮件中的链接重置密码。
             </div>
           ) : null}

@@ -73,8 +73,8 @@ const Register = () => {
     <Container>
       <Row className="justify-content-center">
         <Col sm={12} md={6} lg={4}>
-          <h3 className="mt-sm-3 mt-md-5">创建 Django中文社区账户</h3>
-          <Form className="mt-sm-3 mt-md-5" noValidate onSubmit={handleSubmit}>
+          <h3 className="mt-3 mt-md-5">创建 Django中文社区账户</h3>
+          <Form className="mt-3 mt-md-5" noValidate onSubmit={handleSubmit}>
             {formErrors.non_field_errors?.length && (
               <ul>
                 {formErrors.non_field_errors.map((errMsg, index) => (
