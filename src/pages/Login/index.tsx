@@ -1,15 +1,14 @@
 import * as yup from 'yup';
 
-import { Button, Container, Form, Row, Toast, ToastContainer } from 'react-bootstrap';
+import { Button, Container, Form, Row } from 'react-bootstrap';
 import { HTTPError, TimeoutError } from 'ky';
+import { api, transFormikErrors } from '../../utils';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useToasts, useUserInfo } from '../../hooks';
 
 import { Link } from 'react-router-dom';
 import type { UserInfo } from '../../components/UserInfoProvider';
-import { api } from '../../utils';
 import { useFormik } from 'formik';
-import { useState } from 'react';
-import { useUserInfo } from '../../hooks';
 
 const LoginSchema = yup.object().shape({
   username: yup.string().required('请输入用户名。'),
@@ -17,7 +16,7 @@ const LoginSchema = yup.object().shape({
 });
 
 const Login = () => {
-  const [toastState, setToastState] = useState({ show: false, body: '' });
+  const toasts = useToasts();
   const { setUserInfo } = useUserInfo();
 
   const navigate = useNavigate();
@@ -39,15 +38,27 @@ const Login = () => {
             navigate(searchParams.get('redirect') || '/', { replace: true }),
           );
         } catch (err) {
+          if (err instanceof TimeoutError) {
+            toasts?.create?.({
+              header: `[${err.name}] ${err.message}`,
+              body: '请求超时！',
+              toastProps: { bg: 'danger' },
+            });
+            return;
+          }
+
           if (err instanceof HTTPError) {
-            const res = err.response;
-            if (res.status === 400) {
-              setErrors(await res.json());
+            const { response } = err;
+            if (response && response.status === 400) {
+              setErrors(await response.json());
+              return;
             }
-          } else if (err instanceof TimeoutError) {
-            setToastState({ show: true, body: '请求超时！' });
           } else {
-            setToastState({ show: true, body: '未知错误！' });
+            toasts?.create?.({
+              header: `[${(err as Error).name}] ${(err as Error).message}`,
+              body: '未知错误！',
+              toastProps: { bg: 'danger' },
+            });
           }
         } finally {
           setSubmitting(false);
@@ -55,16 +66,17 @@ const Login = () => {
       },
     });
 
+  const formErrors = transFormikErrors(errors);
+
   return (
     <Container>
       <Row className="justify-content-md-center form-box" lg="3">
         <div>
           <h3 className="mt-sm-3 mt-md-5">登录 Django中文社区</h3>
           <Form className="mt-sm-3 mt-md-5" noValidate onSubmit={handleSubmit}>
-            {/* todo: fix type error */}
-            {errors.non_field_errors?.length > 0 && (
+            {formErrors.non_field_errors?.length && (
               <ul>
-                {errors.non_field_errors.map((errMsg, index) => (
+                {formErrors.non_field_errors.map((errMsg, index) => (
                   <li className="text-danger" key={index}>
                     {errMsg}
                   </li>
@@ -79,9 +91,11 @@ const Login = () => {
                 value={values.username}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                isInvalid={touched.username && errors.username?.length > 0}
+                isInvalid={touched.username && !!formErrors.username?.length}
               />
-              <Form.Control.Feedback type="invalid">{errors.username}</Form.Control.Feedback>
+              <Form.Control.Feedback type="invalid">
+                {formErrors.username?.[0]}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="password">
@@ -92,9 +106,11 @@ const Login = () => {
                 value={values.password}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                isInvalid={touched.password && errors.password?.length > 0}
+                isInvalid={touched.password && !!formErrors.password?.length}
               />
-              <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
+              <Form.Control.Feedback type="invalid">
+                {formErrors.password?.[0]}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <div className="d-grid">
@@ -121,20 +137,6 @@ const Login = () => {
           </div>
         </div>
       </Row>
-      <ToastContainer className="p-3" position="top-end">
-        <Toast
-          bg="danger"
-          onClose={() => setToastState({ show: false, body: '' })}
-          show={toastState.show}
-          delay={3000}
-          autohide
-        >
-          <Toast.Header closeButton={false}>
-            <strong className="me-auto">请求错误</strong>
-          </Toast.Header>
-          <Toast.Body>{toastState.body}</Toast.Body>
-        </Toast>
-      </ToastContainer>
     </Container>
   );
 };

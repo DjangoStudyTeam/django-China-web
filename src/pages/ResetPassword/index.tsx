@@ -2,7 +2,7 @@ import * as yup from 'yup';
 
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { HTTPError, TimeoutError } from 'ky';
-import { api, storage } from '../../utils';
+import { api, storage, transFormikErrors } from '../../utils';
 import { useMemo, useState } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -48,50 +48,59 @@ const ResetPassword = () => {
         storage.remove('reset_password', sessionStorage);
         setDone(true);
       } catch (err) {
-        if (err instanceof HTTPError) {
-          const res = err.response;
-          if (res.status === 400) {
-            const data = await res.json();
-            for (const key in data) {
-              if (key === 'non_field_errors') {
-                setErrors({ [key]: data[key] });
-              } else if (key === 'token' || key === 'uid') {
-                toasts?.create?.({
-                  header: '验证信息已失效',
-                  body: data[key].join(' '),
-                  toastProps: { bg: 'danger' },
-                });
-              } else {
-                setErrors({ [key]: data[key].join(' ') });
-              }
-            }
-          }
-        } else if (err instanceof TimeoutError) {
+        if (err instanceof TimeoutError) {
           toasts?.create?.({
-            header: '请求超时',
+            header: `[${err.name}] ${err.message}`,
             body: '请求超时！',
             toastProps: { bg: 'danger' },
           });
+          return;
+        }
+
+        if (err instanceof HTTPError) {
+          const { response } = err;
+          if (response.status === 400) {
+            const data = await response.json();
+            const { token, uid, ...rest } = data;
+            if (token) {
+              toasts?.create?.({
+                header: '验证信息已失效',
+                body: token.join(' '),
+                toastProps: { bg: 'danger' },
+              });
+            }
+
+            if (uid) {
+              toasts?.create?.({
+                header: '验证信息已失效',
+                body: token.join(' '),
+                toastProps: { bg: 'danger' },
+              });
+            }
+
+            setErrors(rest);
+            return;
+          }
         } else {
           toasts?.create?.({
-            header: '未知错误',
+            header: `[${(err as Error).name}] ${(err as Error).message}`,
             body: '未知错误！',
             toastProps: { bg: 'danger' },
           });
         }
-      } finally {
-        setSubmitting(false);
       }
     },
   });
+
+  const formErrors = transFormikErrors(errors);
 
   const form = (
     <>
       <h3 className="mt-sm-3 mt-md-5">重置密码</h3>
       <Form className="mt-sm-3 mt-md-5" noValidate onSubmit={handleSubmit}>
-        {errors.non_field_errors?.length > 0 && (
+        {formErrors.non_field_errors?.length && (
           <ul>
-            {errors.non_field_errors.map((errMsg, index) => (
+            {formErrors.non_field_errors.map((errMsg, index) => (
               <li className="text-danger" key={index}>
                 {errMsg}
               </li>
@@ -107,9 +116,11 @@ const ResetPassword = () => {
             value={values.new_password}
             onChange={handleChange}
             onBlur={handleBlur}
-            isInvalid={touched.new_password && !!errors.new_password}
+            isInvalid={touched.new_password && !!formErrors.new_password?.length}
           />
-          <Form.Control.Feedback type="invalid">{errors.new_password}</Form.Control.Feedback>
+          <Form.Control.Feedback type="invalid">
+            {formErrors.new_password?.[0]}
+          </Form.Control.Feedback>
         </Form.Group>
         <Form.Group className="mb-3" controlId="form-new-password2">
           <Form.Label>确认密码</Form.Label>
@@ -120,9 +131,11 @@ const ResetPassword = () => {
             value={values.re_new_password}
             onChange={handleChange}
             onBlur={handleBlur}
-            isInvalid={touched.re_new_password && !!errors.re_new_password}
+            isInvalid={touched.re_new_password && !!formErrors.re_new_password?.length}
           />
-          <Form.Control.Feedback type="invalid">{errors.re_new_password}</Form.Control.Feedback>
+          <Form.Control.Feedback type="invalid">
+            {formErrors.re_new_password?.[0]}
+          </Form.Control.Feedback>
         </Form.Group>
         <div className="d-grid">
           <Button

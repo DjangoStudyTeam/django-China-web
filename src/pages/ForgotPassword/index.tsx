@@ -1,18 +1,20 @@
 import * as yup from 'yup';
 
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
-import { HTTPError, TimeoutError } from 'ky';
 
 import { Countdown } from '../../components/Countdown';
+import { TimeoutError } from 'ky';
 import { api } from '../../utils';
 import { useFormik } from 'formik';
 import { useState } from 'react';
+import { useToasts } from '../../hooks';
 
 const ForgotPasswordSchema = yup.object().shape({
   email: yup.string().required('请输入邮箱。'),
 });
 
 const ForgotPassword = () => {
+  const toasts = useToasts();
   const [disabled, setDisabled] = useState(false);
   const [showMsg, setShowMsg] = useState(false);
 
@@ -24,17 +26,22 @@ const ForgotPassword = () => {
     onSubmit: async (values) => {
       setDisabled(true);
       try {
-        const res = await api.anno.post('auth/forgot_password/', { json: values }).json();
+        await api.anno.post('auth/forgot_password/', { json: values }).json();
         setShowMsg(true);
       } catch (err) {
-        if (err instanceof HTTPError) {
-          const res = err.response;
-          if (res.status !== 204) {
-          }
-        } else if (err instanceof TimeoutError) {
+        if (err instanceof TimeoutError) {
+          toasts?.create?.({
+            header: `[${err.name}] ${err.message}`,
+            body: '请求超时！',
+            toastProps: { bg: 'danger' },
+          });
         } else {
+          toasts?.create?.({
+            header: `[${(err as Error).name}] ${(err as Error).message}`,
+            body: '未知错误！',
+            toastProps: { bg: 'danger' },
+          });
         }
-      } finally {
       }
     },
   });
