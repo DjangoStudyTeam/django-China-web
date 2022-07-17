@@ -30,7 +30,7 @@ export const UserInfoProvider = ({ children }: { children: JSX.Element }) => {
   const [userInfo, setUserInfo] = useState(() => storage.get<UserInfo | null>('login'));
 
   useEffect(() => {
-    storage.set('login', userInfo);
+    if (userInfo) storage.set('login', userInfo);
   }, [userInfo]);
 
   return (
